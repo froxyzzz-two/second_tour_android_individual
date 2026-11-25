@@ -28,26 +28,32 @@ import java.time.format.DateTimeFormatter
  * Подробности и теги — в README.md и в техническом задании.
  */
 @Composable
-fun PassHolderCard(pass: PassDetails, modifier: Modifier = Modifier) {
+fun PassHolderCard(
+    pass: PassDetails,
+    modifier: Modifier = Modifier
+) {
     val visitor = pass.visitor
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-    val timeFormatter = DateTimeFormatter.ofPattern("HH.mm")
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
+    val isSameDay = pass.validFrom.toLocalDate() == pass.validTo.toLocalDate()
     val fromDate = pass.validFrom.format(dateFormatter)
     val fromTime = pass.validFrom.format(timeFormatter)
     val toDate = pass.validTo.format(dateFormatter)
     val toTime = pass.validTo.format(timeFormatter)
 
-    val validPeriodText = if (fromDate == toDate) {
-        "Действует $fromDate, $fromTime-$toTime"
+    val validPeriodText = if (isSameDay) {
+        "Действует $fromDate, $fromTime–$toTime"
     } else {
-        "Действует $fromDate $fromTime по $toDate $toTime"
+        "Действует с $fromDate $fromTime по $toDate $toTime"
     }
 
     val limitText = formatEntriesLimit(pass.maxEntries)
 
     Column(
-        modifier = modifier.fillMaxWidth().padding(16.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
         Text(
             text = visitor.fullName,
@@ -55,7 +61,7 @@ fun PassHolderCard(pass: PassDetails, modifier: Modifier = Modifier) {
             modifier = Modifier.testTag(TestIds.PASS_HOLDER)
         )
 
-        if(!visitor.organization.isNullOrBlank()) {
+        if (!visitor.organization.isNullOrBlank()) {
             Text(
                 text = visitor.organization!!,
                 style = MaterialTheme.typography.bodyMedium,
@@ -75,21 +81,20 @@ fun PassHolderCard(pass: PassDetails, modifier: Modifier = Modifier) {
             modifier = Modifier.testTag(TestIds.PASS_ENTRIES_LIMIT)
         )
     }
-
 }
-
 private fun formatEntriesLimit(maxEntries: Int): String {
-    if(maxEntries == 1){
+    if (maxEntries == 1) {
         return "Разовый пропуск"
     }
-    val remainder100 = maxEntries % 100
-    val remainder10 = maxEntries % 10
-
-    val form = when {
-        remainder100 in 11..14 -> "проходов"
-        remainder10 == 1 -> "проход"
-        remainder10 in 2..4 -> "прохода"
+    val mod100 = maxEntries % 100
+    val mod10 = maxEntries % 10
+    val word = when {
+        mod100 in 11..14 -> "проходов"
+        mod10 == 1 -> "проход"
+        mod10 in 2..4 -> "прохода"
         else -> "проходов"
     }
+    return "Лимит: $maxEntries $word"
+}
     return "Лимит: $maxEntries $form"
 }
