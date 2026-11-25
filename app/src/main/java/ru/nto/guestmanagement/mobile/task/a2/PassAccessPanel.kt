@@ -30,34 +30,48 @@ import ru.nto.guestmanagement.mobile.ui.TestIds
 
 /** A2. Метка статуса и QR-код (или заглушка «QR-код недоступен»). */
 @Composable
-fun PassAccessPanel(data: PassData, timeProvider: TimeProvider, modifier: Modifier = Modifier) {
+fun PassAccessPanel(
+    data: PassData,
+    timeProvider: TimeProvider,
+    modifier: Modifier = Modifier
+) {
     val now = timeProvider.now()
     val status = calculatePassStatus(data.pass, data.scans, now)
 
-    val statusText = when(status) {
-        PassStatus.BLOCKED -> "Заблокирован"
-        PassStatus.NOT_STARTED -> "Еще не действует"
-        PassStatus.EXPIRED -> "Истек"
-        PassStatus.EXHAUSTED -> "Лимит проходов исчерпан"
-        PassStatus.ACTIVE -> "Активен"
+    val (statusText, colorRes) = when (status) {
+        PassStatus.BLOCKED -> "Заблокирован" to R.color.status_blocked
+        PassStatus.NOT_STARTED -> "Ещё не действует" to R.color.status_not_started
+        PassStatus.EXPIRED -> "Истёк" to R.color.status_expired
+        PassStatus.EXHAUSTED -> "Лимит проходов исчерпан" to R.color.status_exhausted
+        PassStatus.ACTIVE -> "Активен" to R.color.status_active
     }
 
-    Column(modifier = modifier.fillMaxWidth().padding(16.dp),
+    val statusColor = colorResource(id = colorRes)
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = statusText,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.testTag(TestIds.PASS_STATUS)
+            modifier = Modifier
+                .testTag(TestIds.PASS_STATUS)
+                .statusColor(statusColor)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if(status == PassStatus.ACTIVE) {
-            PassQr(content = data.pass.qrCode)
+        if (status == PassStatus.ACTIVE) {
+            PassQr(
+                content = data.pass.qrCode,
+                modifier = Modifier.testTag(TestIds.PASS_QR)
+            )
         } else {
             Text(
-                text = "QR код недоступен",
+                text = "QR-код недоступен",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.testTag(TestIds.PASS_QR_HIDDEN)
             )
