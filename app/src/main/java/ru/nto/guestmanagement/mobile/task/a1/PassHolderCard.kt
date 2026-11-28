@@ -63,7 +63,7 @@ fun PassHolderCard(
 
         if (!visitor.organization.isNullOrBlank()) {
             Text(
-                text = visitor.organization,
+                text = visitor.organization!!,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.testTag(TestIds.PASS_ORGANIZATION)
             )

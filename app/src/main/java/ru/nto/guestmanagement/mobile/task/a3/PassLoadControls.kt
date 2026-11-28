@@ -33,66 +33,68 @@ import ru.nto.guestmanagement.mobile.ui.TestIds
 /** A3. Индикатор загрузки, ошибка с кнопкой «Повторить», кнопка «Обновить», надпись «Нет связи». */
 @Composable
 fun PassLoadControls(
-    state: PassScreenState,
-    onRefresh: () -> Unit,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        state: PassScreenState,
+        onRefresh: () -> Unit,
+        onRetry: () -> Unit,
+        modifier: Modifier = Modifier
     ) {
-        when(state) {
-            is PassScreenState.InitialLoading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.testTag(TestIds.PASS_LOADING)
-                )
-            }
-            is PassScreenState.InitialError -> {
-                Text(
-                    text = state.message,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.testTag(TestIds.PASS_ERROR)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = onRetry,
-                    modifier = Modifier.testTag(TestIds.PASS_RETRY)
-                ) {
-                    Text("Повторить")
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            when (state) {
+                is PassScreenState.InitialLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.testTag(TestIds.PASS_LOADING)
+                    )
                 }
-            }
-            is PassScreenState.Content -> {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
+                is PassScreenState.InitialError -> {
+                    Text(
+                        text = state.message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.testTag(TestIds.PASS_ERROR)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Button(
-                        onClick = onRefresh,
-                        enabled = !state.isRefreshing,
-                        modifier = Modifier.testTag(TestIds.PASS_REFRESH)
+                        onClick = onRetry,
+                        modifier = Modifier.testTag(TestIds.PASS_RETRY)
                     ) {
-                        Text("Обновить")
+                        Text("Повторить")
+                    }
+                }
+                is PassScreenState.Content -> {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(
+                            onClick = onRefresh,
+                            enabled = !state.isRefreshing,
+                            modifier = Modifier.testTag(TestIds.PASS_REFRESH)
+                        ) {
+                            Text("Обновить")
+                        }
+
+                        if (state.isRefreshing) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier.testTag(TestIds.PASS_LOADING)
+                            )
+                        }
                     }
 
-                    if(state.isRefreshing) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        CircularProgressIndicator(
-                            modifier = Modifier.testTag(TestIds.PASS_LOADING)
+                    if (state.isOffline && !state.isRefreshing) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Нет связи",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.testTag(TestIds.PASS_OFFLINE)
                         )
                     }
-                }
-
-                if (state.isOffline && !state.isRefreshing) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Нет связи",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.testTag(TestIds.PASS_OFFLINE)
-                    )
                 }
             }
         }
     }
-}
