@@ -21,12 +21,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import ru.nto.guestmanagement.mobile.R
 import ru.nto.guestmanagement.mobile.data.TimeProvider
 import ru.nto.guestmanagement.mobile.model.PassData
 import ru.nto.guestmanagement.mobile.model.PassStatus
 import ru.nto.guestmanagement.mobile.ui.PassQr
 import ru.nto.guestmanagement.mobile.ui.TestIds
+import ru.nto.guestmanagement.mobile.ui.statusColor
 
 /** A2. Метка статуса и QR-код (или заглушка «QR-код недоступен»). */
 @Composable
